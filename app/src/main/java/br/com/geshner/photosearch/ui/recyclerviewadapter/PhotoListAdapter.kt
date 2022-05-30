@@ -15,18 +15,30 @@ import coil.size.ViewSizeResolver
 //Adapter for Photolist Recyclerview
 class PhotoListAdapter(
     private val context: Context,
+    var clickListener: (photo: Photo) -> Unit = {},
     photos: List<Photo> = listOf()
 ) : RecyclerView.Adapter<PhotoListAdapter.ViewHolder>() {
 
     private val photos = photos.toMutableList()
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         private val srcImage = view.findViewById<ImageView>(R.id.photo_list_item_image_view)
         private val photographerText =
             view.findViewById<TextView>(R.id.photo_list_item_photographer)
+        private lateinit var  photo: Photo
+
+        init {
+            itemView.setOnClickListener{
+                if(::photo.isInitialized) {
+                    clickListener(photo)
+                }
+            }
+        }
+
 
         fun bind(photo: Photo) {
+            this.photo = photo
             photographerText.text = photo.photographer
             srcImage.contentDescription = photo.alt
             srcImage.load(photo.src) {

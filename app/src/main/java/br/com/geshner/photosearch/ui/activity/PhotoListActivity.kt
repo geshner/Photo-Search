@@ -1,5 +1,6 @@
 package br.com.geshner.photosearch.ui.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -37,11 +38,21 @@ class PhotoListActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = GridLayoutManager(this, 2)
 
+        adapter.clickListener = {
+            val intent = Intent(
+                this,
+                PhotoViewerActivity::class.java
+            ).apply {
+                putExtra("Photo", it)
+            }
+            startActivity(intent)
+        }
+
     }
 
     private fun fetchPhotos(query: String) {
         CoroutineScope(IO).launch {
-            when (val response = PhotoRepository().searchPhotos("nature")) {
+            when (val response = PhotoRepository().searchPhotos(query)) {
                 is Resource.Success -> withContext(Main) { adapter.update(response.data as List<Photo>) }
                 is Resource.Error -> {}
             }
