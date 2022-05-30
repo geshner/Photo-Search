@@ -5,18 +5,15 @@ import android.os.Bundle
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import br.com.geshner.photosearch.R
 import br.com.geshner.photosearch.databinding.ActivityPhotoListBinding
 import br.com.geshner.photosearch.model.Photo
-import br.com.geshner.photosearch.repository.PhotoRepository
 import br.com.geshner.photosearch.repository.Resource
+import br.com.geshner.photosearch.ui.displayErrorMessage
 import br.com.geshner.photosearch.ui.recyclerviewadapter.PhotoListAdapter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import br.com.geshner.photosearch.ui.viewmodel.PhotoListViewModel
 
 class PhotoListActivity : AppCompatActivity() {
 
@@ -37,10 +34,31 @@ class PhotoListActivity : AppCompatActivity() {
         ActivityPhotoListBinding.inflate(layoutInflater)
     }
 
+    private val viewModel by lazy {
+        val provider = ViewModelProvider(this)
+        provider[PhotoListViewModel::class.java]
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         configureRecyclerView()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        viewModel.photos.observe(this) { resource ->
+            binding.activityPhotoListProgress.hide()
+            when (resource) {
+                is Resource.Success -> {
+                    adapter.update(resource.data as List<Photo>)
+                }
+                is Resource.Error -> {
+                    displayErrorMessage(resource.e.message ?: "Failed to load Image")
+                }
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -74,11 +92,7 @@ class PhotoListActivity : AppCompatActivity() {
 
     //Get photos from API based on query string
     private fun fetchPhotos(query: String) {
-        CoroutineScope(IO).launch {
-            when (val response = PhotoRepository().searchPhotos(query)) {
-                is Resource.Success -> withContext(Main) { adapter.update(response.data as List<Photo>) }
-                is Resource.Error -> {}
-            }
-        }
+        binding.activityPhotoListProgress.show()
+        viewModel.queryPhotos(query)
     }
 }

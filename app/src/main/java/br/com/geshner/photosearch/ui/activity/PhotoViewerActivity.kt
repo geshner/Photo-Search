@@ -12,7 +12,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import br.com.geshner.photosearch.databinding.ActivityPhotoViewerBinding
 import br.com.geshner.photosearch.model.Photo
-import coil.load
+import br.com.geshner.photosearch.ui.loadImage
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -71,7 +71,7 @@ class PhotoViewerActivity : AppCompatActivity() {
 
         with(intent) {
             val photo = getSerializableExtra("Photo") as Photo
-            fullscreenContent.load(
+            fullscreenContent.loadImage(
                 photo.src
             )
             binding.activityPhotoViewerPhotographer.text = photo.photographer

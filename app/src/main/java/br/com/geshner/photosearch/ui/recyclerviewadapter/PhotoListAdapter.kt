@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import br.com.geshner.photosearch.R
 import br.com.geshner.photosearch.databinding.PhotoListItemBinding
 import br.com.geshner.photosearch.model.Photo
+import br.com.geshner.photosearch.ui.loadImage
 import coil.load
 import coil.size.ViewSizeResolver
 
@@ -38,12 +39,7 @@ class PhotoListAdapter(
             this.photo = photo
             photographerText.text = photo.photographer
             srcImage.contentDescription = photo.alt
-            srcImage.load(photo.src) {
-                crossfade(true)
-                placeholder(R.drawable.image_placeholder)
-                error(R.drawable.no_image_available)
-                size(ViewSizeResolver(srcImage))
-            }
+            srcImage.loadImage(photo.src)
         }
     }
 
