@@ -2,12 +2,10 @@ package br.com.geshner.photosearch.ui.recyclerviewadapter
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import br.com.geshner.photosearch.R
+import br.com.geshner.photosearch.databinding.PhotoListItemBinding
 import br.com.geshner.photosearch.model.Photo
 import coil.load
 import coil.size.ViewSizeResolver
@@ -21,16 +19,15 @@ class PhotoListAdapter(
 
     private val photos = photos.toMutableList()
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(binding: PhotoListItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        private val srcImage = view.findViewById<ImageView>(R.id.photo_list_item_image_view)
-        private val photographerText =
-            view.findViewById<TextView>(R.id.photo_list_item_photographer)
-        private lateinit var  photo: Photo
+        private val srcImage = binding.photoListItemImageView
+        private val photographerText = binding.photoListItemPhotographer
+        private lateinit var photo: Photo
 
         init {
-            itemView.setOnClickListener{
-                if(::photo.isInitialized) {
+            itemView.setOnClickListener {
+                if (::photo.isInitialized) {
                     clickListener(photo)
                 }
             }
@@ -52,9 +49,9 @@ class PhotoListAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(context)
-        val view = inflater.inflate(R.layout.photo_list_item, parent, false)
+        val binding = PhotoListItemBinding.inflate(inflater, parent, false)
 
-        return ViewHolder(view)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
