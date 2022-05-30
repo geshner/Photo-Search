@@ -52,4 +52,10 @@ class PhotoListAdapter(
 
     override fun getItemCount(): Int = this.photos.size
 
+    fun update(list: List<Photo>) {
+        photos.clear()
+        photos.addAll(list)
+        notifyDataSetChanged()
+    }
+
 }
