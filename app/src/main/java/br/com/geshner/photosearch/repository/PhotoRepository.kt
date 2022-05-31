@@ -14,6 +14,10 @@ class PhotoRepository(private val webClient: PexelsWebClient = PexelsWebClient()
             val response = webClient.searchPhotos(query)
 
             val resource = response?.let {
+                if (it.totalResults == 0) {
+                    return@let  Resource.Error(Exception("No results found"))
+                }
+
                 val photos = it.photos.map { pexelsPhoto ->
                     Photo(
                         id = pexelsPhoto.id,
@@ -24,7 +28,7 @@ class PhotoRepository(private val webClient: PexelsWebClient = PexelsWebClient()
                 }
                 Resource.Success(photos)
 
-            } ?: Resource.Error(Exception("no image fetched"))
+            } ?: Resource.Error(Exception("Failed to fetch photos"))
 
             emit(resource)
         }
