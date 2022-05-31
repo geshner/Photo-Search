@@ -1,6 +1,6 @@
 package br.com.geshner.photosearch.webclient
 
-import br.com.geshner.photosearch.BuildConfig
+import br.com.geshner.photosearch.utils.Keys
 import br.com.geshner.photosearch.webclient.service.PexelsService
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -16,7 +16,7 @@ class AppRetrofit {
         chain.proceed(
             chain.request()
                 .newBuilder()
-                .addHeader(AUTH_HEADER, BuildConfig.PEXELS_KEY)
+                .addHeader(AUTH_HEADER, Keys.pexelsApiKey())
                 .build()
         )
     }.build()
