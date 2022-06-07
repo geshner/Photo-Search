@@ -1,7 +1,6 @@
 package br.com.geshner.photosearch.repository
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import br.com.geshner.photosearch.model.Photo
 import br.com.geshner.photosearch.webclient.PexelsWebClient
@@ -14,8 +13,8 @@ class PhotoRepository(private val webClient: PexelsWebClient = PexelsWebClient()
             val response = webClient.searchPhotos(query)
 
             val resource = response?.let {
-                if (it.totalResults == 0) {
-                    return@let  Resource.Error(Exception("No results found"))
+                if (it.total_results == 0) {
+                    return@let Resource.Error(Exception("No results found"))
                 }
 
                 val photos = it.photos.map { pexelsPhoto ->
